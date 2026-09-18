@@ -1,79 +1,82 @@
-const API_BASE_URL = "http://localhost:8080/api";
+import { supabase } from "../integrations/supabase/client";
 
-async function request(path, options = {}) {
-  let response;
+const NETWORK_ERROR =
+  "Unable to reach the ResolveIQ server. Please check your connection and try again.";
 
-  try {
-    response = await fetch(`${API_BASE_URL}${path}`, {
-      headers: { "Content-Type": "application/json" },
-      ...options,
-    });
-  } catch {
-    throw new Error(
-      "Unable to reach the ResolveIQ server. Please check your connection and try again."
-    );
-  }
-
-  const data = await response.json().catch(() => null);
-
-  if (!response.ok) {
-    throw new Error(errorMessage(data, response.status));
-  }
-
-  return data;
-}
-
-function errorMessage(data, status) {
-  if (data?.fieldErrors) {
-    const details = Object.values(data.fieldErrors).join(", ");
+function errorMessage(payload, status, fallback) {
+  if (payload?.fieldErrors) {
+    const details = Object.values(payload.fieldErrors).join(", ");
     if (details) {
       return details;
     }
   }
 
-  if (data?.message) {
-    return data.message;
+  if (payload?.message) {
+    return payload.message;
+  }
+
+  if (fallback) {
+    return fallback(status);
   }
 
   return `Something went wrong (error ${status}). Please try again.`;
 }
 
-export function createTicket(ticket) {
-  return request("/tickets", {
-    method: "POST",
-    body: JSON.stringify(ticket),
+/**
+ * Calls an Enter Cloud backend function and reproduces the error handling the
+ * REST client used to provide: the function's JSON error body is turned into an
+ * Error whose message matches what the pages already display.
+ */
+async function call(functionName, body, fallback) {
+  const { data, error } = await supabase.functions.invoke(functionName, {
+    body,
+    headers: { "Content-Type": "application/json" },
   });
+
+  if (!error) {
+    return data;
+  }
+
+  // FunctionsHttpError carries the HTTP response; transport failures do not.
+  const response = error.context;
+
+  if (!response || typeof response.json !== "function") {
+    throw new Error(NETWORK_ERROR);
+  }
+
+  const payload = await response.json().catch(() => null);
+
+  throw new Error(errorMessage(payload, response.status, fallback));
+}
+
+export function createTicket(ticket) {
+  return call("tickets", { action: "create", ...ticket });
+}
+
+export function getTicket(ticketId) {
+  return call(
+    "tickets",
+    { action: "get", ticketId },
+    (status) => `Unable to load case (error ${status}).`
+  );
+}
+
+export function investigateTicket(ticketId) {
+  return call("investigations", { action: "investigate", ticketId });
+}
+
+export function getInvestigationByTicket(ticketId) {
+  return call("investigations", { action: "investigate", ticketId });
 }
 
 export function resolveInvestigation(investigationId) {
-  return request(`/resolutions/investigation/${investigationId}`, {
-    method: "POST",
-  });
+  return call("resolutions", { action: "resolve", investigationId });
 }
 
 export function resolveTicket(ticketId) {
-  return request(`/resolutions/ticket/${ticketId}`, {
-    method: "POST",
-  });
+  return call("resolutions", { action: "resolve", ticketId });
 }
 
 export function getResolution(investigationId) {
-  return request(`/resolutions/investigation/${investigationId}`, {
-    method: "GET",
-  });
-}
-export function investigateTicket(ticketId) {
-  return request(`/investigations/ticket/${ticketId}`, {
-    method: "POST",
-  });
-}
-export function getInvestigationByTicket(ticketId) {
-  return request(`/investigations/ticket/${ticketId}`, {
-    method: "POST",
-  });
-}
-export function getCustomer(customerId) {
-  return request(`/customers/${customerId}`, {
-    method: "GET",
-  });
+  return call("resolutions", { action: "get", investigationId });
 }

@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-
-const API_BASE_URL = "http://localhost:8080/api";
+import { getTicket } from "../api/client";
 
 function CaseView() {
   const { ticketId } = useParams();
@@ -16,18 +15,7 @@ function CaseView() {
         setLoading(true);
         setError("");
 
-        const response = await fetch(
-          `${API_BASE_URL}/tickets/${ticketId}`
-        );
-
-        const data = await response.json().catch(() => null);
-
-        if (!response.ok) {
-          throw new Error(
-            data?.message ||
-              `Unable to load case (error ${response.status}).`
-          );
-        }
+        const data = await getTicket(ticketId);
 
         setTicket(data);
       } catch (err) {
