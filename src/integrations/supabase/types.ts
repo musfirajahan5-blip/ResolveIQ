@@ -3360,7 +3360,595 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      actions: {
+        Row: {
+          action_code: string
+          action_type: string
+          created_at: string
+          description: string | null
+          executed_at: string | null
+          id: number
+          investigation_id: number
+          performed_by: string | null
+          result: string | null
+          status: string
+        }
+        Insert: {
+          action_code: string
+          action_type: string
+          created_at?: string
+          description?: string | null
+          executed_at?: string | null
+          id?: number
+          investigation_id: number
+          performed_by?: string | null
+          result?: string | null
+          status?: string
+        }
+        Update: {
+          action_code?: string
+          action_type?: string
+          created_at?: string
+          description?: string | null
+          executed_at?: string | null
+          id?: number
+          investigation_id?: number
+          performed_by?: string | null
+          result?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "actions_investigation_id_fkey"
+            columns: ["investigation_id"]
+            referencedRelation: "investigations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      audit_logs: {
+        Row: {
+          action_id: number | null
+          actor_reference: string | null
+          actor_type: string
+          audit_code: string
+          created_at: string
+          escalation_id: number | null
+          event_description: string
+          event_type: string
+          id: number
+          investigation_id: number | null
+        }
+        Insert: {
+          action_id?: number | null
+          actor_reference?: string | null
+          actor_type: string
+          audit_code: string
+          created_at?: string
+          escalation_id?: number | null
+          event_description: string
+          event_type: string
+          id?: number
+          investigation_id?: number | null
+        }
+        Update: {
+          action_id?: number | null
+          actor_reference?: string | null
+          actor_type?: string
+          audit_code?: string
+          created_at?: string
+          escalation_id?: number | null
+          event_description?: string
+          event_type?: string
+          id?: number
+          investigation_id?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audit_logs_action_id_fkey"
+            columns: ["action_id"]
+            referencedRelation: "actions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "audit_logs_escalation_id_fkey"
+            columns: ["escalation_id"]
+            referencedRelation: "escalations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "audit_logs_investigation_id_fkey"
+            columns: ["investigation_id"]
+            referencedRelation: "investigations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      conversations: {
+        Row: {
+          created_at: string
+          id: number
+          message: string
+          sender_type: string
+          ticket_id: number
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          message: string
+          sender_type: string
+          ticket_id: number
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          message?: string
+          sender_type?: string
+          ticket_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversations_ticket_id_fkey"
+            columns: ["ticket_id"]
+            referencedRelation: "support_tickets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      customers: {
+        Row: {
+          created_at: string
+          customer_code: string
+          email: string
+          id: number
+          name: string
+          phone: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          customer_code: string
+          email: string
+          id?: number
+          name: string
+          phone?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          customer_code?: string
+          email?: string
+          id?: number
+          name?: string
+          phone?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      escalations: {
+        Row: {
+          assigned_to: string | null
+          created_at: string
+          escalated_at: string
+          escalation_code: string
+          handoff_summary: string | null
+          id: number
+          investigation_id: number
+          priority: string
+          reason: string
+          resolved_at: string | null
+          status: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          created_at?: string
+          escalated_at?: string
+          escalation_code: string
+          handoff_summary?: string | null
+          id?: number
+          investigation_id: number
+          priority?: string
+          reason: string
+          resolved_at?: string | null
+          status?: string
+        }
+        Update: {
+          assigned_to?: string | null
+          created_at?: string
+          escalated_at?: string
+          escalation_code?: string
+          handoff_summary?: string | null
+          id?: number
+          investigation_id?: number
+          priority?: string
+          reason?: string
+          resolved_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "escalations_investigation_id_fkey"
+            columns: ["investigation_id"]
+            referencedRelation: "investigations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      evidence: {
+        Row: {
+          created_at: string
+          description: string
+          evidence_code: string
+          evidence_type: string
+          id: number
+          investigation_id: number
+          relevance: string | null
+          source_reference: string | null
+          source_type: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          evidence_code: string
+          evidence_type: string
+          id?: number
+          investigation_id: number
+          relevance?: string | null
+          source_reference?: string | null
+          source_type: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          evidence_code?: string
+          evidence_type?: string
+          id?: number
+          investigation_id?: number
+          relevance?: string | null
+          source_reference?: string | null
+          source_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "evidence_investigation_id_fkey"
+            columns: ["investigation_id"]
+            referencedRelation: "investigations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      investigations: {
+        Row: {
+          authorization_check: string | null
+          completed_at: string | null
+          confidence: number | null
+          created_at: string
+          customer_response: string | null
+          decision: string | null
+          escalation_reason: string | null
+          id: number
+          intent: string | null
+          investigation_code: string
+          policy_check: string | null
+          recommended_action: string | null
+          risk_level: string | null
+          root_cause: string | null
+          sentiment: string | null
+          started_at: string
+          status: string
+          ticket_id: number
+        }
+        Insert: {
+          authorization_check?: string | null
+          completed_at?: string | null
+          confidence?: number | null
+          created_at?: string
+          customer_response?: string | null
+          decision?: string | null
+          escalation_reason?: string | null
+          id?: number
+          intent?: string | null
+          investigation_code: string
+          policy_check?: string | null
+          recommended_action?: string | null
+          risk_level?: string | null
+          root_cause?: string | null
+          sentiment?: string | null
+          started_at?: string
+          status?: string
+          ticket_id: number
+        }
+        Update: {
+          authorization_check?: string | null
+          completed_at?: string | null
+          confidence?: number | null
+          created_at?: string
+          customer_response?: string | null
+          decision?: string | null
+          escalation_reason?: string | null
+          id?: number
+          intent?: string | null
+          investigation_code?: string
+          policy_check?: string | null
+          recommended_action?: string | null
+          risk_level?: string | null
+          root_cause?: string | null
+          sentiment?: string | null
+          started_at?: string
+          status?: string
+          ticket_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "investigations_ticket_id_fkey"
+            columns: ["ticket_id"]
+            referencedRelation: "support_tickets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          created_at: string
+          customer_id: number
+          id: number
+          order_code: string
+          order_date: string
+          product_id: number
+          quantity: number | null
+          status: string
+          total_amount: number | null
+        }
+        Insert: {
+          created_at?: string
+          customer_id: number
+          id?: number
+          order_code: string
+          order_date?: string
+          product_id: number
+          quantity?: number | null
+          status?: string
+          total_amount?: number | null
+        }
+        Update: {
+          created_at?: string
+          customer_id?: number
+          id?: number
+          order_code?: string
+          order_date?: string
+          product_id?: number
+          quantity?: number | null
+          status?: string
+          total_amount?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_customer_id_fkey"
+            columns: ["customer_id"]
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_product_id_fkey"
+            columns: ["product_id"]
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payments: {
+        Row: {
+          amount: number
+          created_at: string
+          id: number
+          order_id: number
+          payment_code: string
+          payment_date: string
+          payment_method: string | null
+          status: string
+          transaction_reference: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: number
+          order_id: number
+          payment_code: string
+          payment_date?: string
+          payment_method?: string | null
+          status?: string
+          transaction_reference?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: number
+          order_id?: number
+          payment_code?: string
+          payment_date?: string
+          payment_method?: string | null
+          status?: string
+          transaction_reference?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_order_id_fkey"
+            columns: ["order_id"]
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      products: {
+        Row: {
+          category: string | null
+          created_at: string
+          description: string | null
+          id: number
+          name: string
+          price: number | null
+          product_code: string
+          status: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          id?: number
+          name: string
+          price?: number | null
+          product_code: string
+          status?: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          id?: number
+          name?: string
+          price?: number | null
+          product_code?: string
+          status?: string
+        }
+        Relationships: []
+      }
+      refunds: {
+        Row: {
+          amount: number
+          created_at: string
+          id: number
+          payment_id: number
+          processed_at: string | null
+          reason: string | null
+          refund_code: string
+          refund_reference: string | null
+          requested_at: string
+          status: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: number
+          payment_id: number
+          processed_at?: string | null
+          reason?: string | null
+          refund_code: string
+          refund_reference?: string | null
+          requested_at?: string
+          status?: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: number
+          payment_id?: number
+          processed_at?: string | null
+          reason?: string | null
+          refund_code?: string
+          refund_reference?: string | null
+          requested_at?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "refunds_payment_id_fkey"
+            columns: ["payment_id"]
+            referencedRelation: "payments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      support_policies: {
+        Row: {
+          auto_resolution_allowed: boolean
+          category: string
+          created_at: string
+          description: string | null
+          id: number
+          manager_approval_required: boolean
+          maximum_auto_refund_amount: number | null
+          policy_code: string
+          policy_name: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          auto_resolution_allowed?: boolean
+          category: string
+          created_at?: string
+          description?: string | null
+          id?: number
+          manager_approval_required?: boolean
+          maximum_auto_refund_amount?: number | null
+          policy_code: string
+          policy_name: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          auto_resolution_allowed?: boolean
+          category?: string
+          created_at?: string
+          description?: string | null
+          id?: number
+          manager_approval_required?: boolean
+          maximum_auto_refund_amount?: number | null
+          policy_code?: string
+          policy_name?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      support_tickets: {
+        Row: {
+          case_id: string
+          category: string
+          created_at: string
+          customer_id: number
+          description: string
+          id: number
+          order_reference: string | null
+          status: string
+          subject: string
+          updated_at: string
+        }
+        Insert: {
+          case_id: string
+          category: string
+          created_at?: string
+          customer_id: number
+          description: string
+          id?: number
+          order_reference?: string | null
+          status?: string
+          subject: string
+          updated_at?: string
+        }
+        Update: {
+          case_id?: string
+          category?: string
+          created_at?: string
+          customer_id?: number
+          description?: string
+          id?: number
+          order_reference?: string | null
+          status?: string
+          subject?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "support_tickets_customer_id_fkey"
+            columns: ["customer_id"]
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
